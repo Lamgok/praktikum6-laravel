@@ -21,10 +21,13 @@ class TodoController extends Controller
         $query = $user->todos()->latest();
 
         // Fitur Pencarian
-        if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
-
+        if ($request->has('search') && !empty($request->search)) {
+        $searchTerm = $request->search;
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('title', 'ilike', '%' . $searchTerm . '%')
+            ->orWhere('description', 'ilike', '%' . $searchTerm . '%');
+        });
+}
         // Fitur Filter Status
         if ($request->has('status') && $request->status !== 'all') {
             // 'finished' (true) atau 'unfinished' (false)
