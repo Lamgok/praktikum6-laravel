@@ -103,18 +103,30 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
 
 // --- Komponen Sub: Trix Editor Wrapper ---
 const TrixEditor = ({ value, onChange, placeholder, ...props }) => {
-    const editorRef = useRef(null);
     const trixRef = useRef(null);
+    const lastValueRef = useRef(value);
 
     useEffect(() => {
         const trixEditor = trixRef.current;
 
-        const handleTrixChange = (event) => {
-            onChange(event.target.innerHTML);
+        const handleTrixChange = () => {
+            if (trixEditor) {
+                const newValue = trixEditor.value;
+                if (newValue !== lastValueRef.current) {
+                    lastValueRef.current = newValue;
+                    onChange(newValue);
+                }
+            }
         };
 
         if (trixEditor) {
             trixEditor.addEventListener("trix-change", handleTrixChange);
+
+            // Set nilai awal hanya jika berbeda
+            if (value !== lastValueRef.current) {
+                trixEditor.editor.loadHTML(value || "");
+                lastValueRef.current = value;
+            }
         }
 
         return () => {
@@ -124,23 +136,36 @@ const TrixEditor = ({ value, onChange, placeholder, ...props }) => {
         };
     }, [onChange]);
 
+    // Effect untuk update value dari parent (tanpa reset cursor)
     useEffect(() => {
         if (
             trixRef.current &&
             trixRef.current.editor &&
-            value !== trixRef.current.editor.innerHTML
+            value !== lastValueRef.current
         ) {
+            // Simpan posisi cursor
+            const selection = trixRef.current.editor.getSelectedRange();
+
+            // Update content
             trixRef.current.editor.loadHTML(value || "");
+            lastValueRef.current = value;
+
+            // Restore posisi cursor jika mungkin
+            if (selection) {
+                setTimeout(() => {
+                    trixRef.current.editor.setSelectedRange(selection);
+                }, 0);
+            }
         }
     }, [value]);
 
     return (
-        <div className="border rounded-md overflow-hidden">
+        <div className="border-2 border-gray-200 rounded-xl overflow-hidden hover:border-blue-300 focus-within:border-blue-500 transition-colors duration-200 shadow-sm">
             <trix-editor
                 ref={trixRef}
                 input="trix-input"
                 placeholder={placeholder}
-                className="trix-content min-h-[150px] p-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                className="trix-content min-h-[150px] p-4 text-sm focus:outline-none bg-white"
                 {...props}
             />
             <input id="trix-input" type="hidden" value={value || ""} />
