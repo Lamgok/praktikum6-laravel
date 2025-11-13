@@ -12,7 +12,7 @@ createInertiaApp({
         const pages = import.meta.glob("./pages/**/*.jsx", { eager: true });
         // --- PERBAIKAN DIMULAI DI SINI ---
         // Dapatkan objek modul
-        const pageModule = pages[`./Pages/${name}.jsx`];
+        const pageModule = pages[`./pages/${name}.jsx`];
 
         // Cek dan kembalikan default export.
         // Jika pageModule adalah undefined (halaman tidak ada), maka akan mengembalikan undefined.
