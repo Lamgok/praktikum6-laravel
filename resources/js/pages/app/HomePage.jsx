@@ -548,8 +548,8 @@ export default function HomePage() {
                                 </div>
                             </div>
                             <p className="text-xs text-muted-foreground mt-1">
-                                **{totalCompleted}** dari **{totalTodos}** tugas
-                                telah diselesaikan.
+                                {totalCompleted} dari {totalTodos} tugas telah
+                                diselesaikan.
                             </p>
                         </div>
                     </Card>
