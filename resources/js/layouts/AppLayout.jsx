@@ -9,8 +9,6 @@ export default function AppLayout({ children }) {
     };
 
     return (
-        // Menggunakan Flexbox column untuk memastikan konten utama (main)
-        // meregang dan mendorong footer ke bagian bawah layar.
         <div className="min-h-screen bg-background flex flex-col">
             {/* Navigation - Dibuat lebih menonjol dengan shadow dan warna primary */}
             <nav className="border-b bg-card shadow-lg sticky top-0 z-10">
